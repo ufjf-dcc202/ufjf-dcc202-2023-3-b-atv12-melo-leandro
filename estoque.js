@@ -1,12 +1,13 @@
 let estoque = {
-    'joao': {
-        'maca': 1,
-        'banana': 2
-    },
-    'maria':{
-        'maca': 1,
-        'pera': 3
-    }
+    'joao': [
+        {'tipo': 'maca', 'qtd': 1},
+        {'tipo': 'pera', 'qtd': 2}
+        
+    ],
+    'maria':[
+        {'tipo': 'maca', 'qtd': 2},
+        {'tipo': 'banana', 'qtd': 4}
+    ]
 
 };
 
