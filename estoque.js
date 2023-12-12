@@ -1,12 +1,10 @@
 let estoque = {
     'joao': [
-        {'tipo': 'maca', 'qtd': 1},
-        {'tipo': 'pera', 'qtd': 2}
+        {'tipo': 'maca', 'quantidade': 1},
         
     ],
     'maria':[
-        {'tipo': 'maca', 'qtd': 2},
-        {'tipo': 'banana', 'qtd': 4}
+        {'tipo': 'maca', 'quantidade': 2},
     ]
 
 };
@@ -16,66 +14,77 @@ function getEstoque(){
 }
 
 function transacaoNoEstoque(origem, destino, tipo, quantidade) {
-    if (destino === "pomar"){
-        dePessoaParaPomar(origem, tipo, quantidade);
-        return;
+    
+    if (!estoque[origem] && origem !== "pomar") {
+        estoque[origem] = [];
     }
     
-    if (origem === "pomar"){
-        dePomarParaPessoa(destino, quantidade);
+    if (!estoque[destino] && destino !== "pomar") {
+        estoque[destino] = [];
+    }    
+
+    if (quantidade < 0 || origem === destino) {
         return;
     }
 
-    const pessoaOrigem = estoque[origem];
-    const pessoaDestino = estoque[destino];
-    let monteOrigem;
-    for(let i=0; i < pessoaOrigem.length; i++){
-        const monte = pessoaOrigem[i];
-        if(monte.tipo === tipo){
-            monteOrigem = monte;
-            break;
+    if (destino === "pomar") {
+        let itemEncontrado = estoque[origem].find(item => item.tipo === tipo);
+
+        if (itemEncontrado) {
+            if(itemEncontrado.quantidade >= quantidade){
+                itemEncontrado.quantidade = itemEncontrado.quantidade - quantidade;
+            } else {
+                itemEncontrado.quantidade = 0;
+            }
+        } else {
+            return;
         }
-    }
-    if(!monteOrigem){
         return;
     }
-    for(let i = 0; i < pessoaDestino.length; i++){
-        const monte = pessoaDestino[i];
-        if(monte.tipo === tipo){
-            monteDestino = monte;
-            break;
+
+    
+    if (origem === "pomar") {
+        const itemEncontrado = estoque[destino].find(item => item.tipo === tipo);
+    
+        if (itemEncontrado) {
+            itemEncontrado.quantidade += quantidade;
+        } else {
+            estoque[destino].push({ tipo, quantidade });
+        }
+        return;
+    }
+
+    else{
+        let itemOrigem = estoque[origem].find(item => item.tipo === tipo);
+        let itemDestino = estoque[destino].find(item => item.tipo === tipo);
+
+        if(!itemOrigem){
+            return;
+        }
+
+        else if(itemOrigem.quantidade < quantidade){
+            if (itemDestino) {
+                itemDestino.quantidade += itemOrigem.quantidade;
+            } else {
+                estoque[destino].push({ tipo: tipo, quantidade: itemOrigem.quantidade });
+            }
+            itemOrigem.quantidade = 0;
+        }
+
+        else {
+            if (itemDestino) {
+                itemDestino.quantidade += quantidade;
+            } else {
+                estoque[destino].push({ tipo, quantidade });
+            }
+            itemOrigem.quantidade = itemOrigem.quantidade - quantidade;
         }
     }
-    if(!monteDestino){
-        monteDestino = {'tipo': tipo, qtd: 0};
-        pessoaDestino.push(monteDestino);
-    }
-    const qtdReal = Math.min(quantidade, monteOrigem.qtd);
-    monteDestino.qtd += qtdReal;
-    monteOrigem.qtd -= qtdReal;
-}    
-function dePomarParaPessoa(destino, tipo, quantidade){
-    const pessoa = estoque[destino];
-        for(let i=0; i<pessoa.length; i++){
-            const monte = pessoa[i];
-            if(monte.tipo === tipo){
-                monte.qtd += Math.max(quantidade, monte.qtd);
-                return;
-            }
-        }
-        const novoMonte = {'tipo': tipo, 'qtd': Math.max(quantidade, 0)};
-        pessoa.push(novoMonte);
+    return;
 }
 
-function dePessoaParaPomar(destino, tipo, quantidade){
-    const pessoa = estoque[origem];
-        for(let i=0; i<pessoalength; i++){
-            const monte = pessoa[i];
-            if(monte.tipo === tipo){
-                monte.qtd -= Math.min(quantidade, monte.qtd);
-            }
-        }
+function limpaEstoque() {
+    estoque = {};
 }
 
-
-export {getEstoque, transacaoNoEstoque}
+export {getEstoque, transacaoNoEstoque, limpaEstoque}
