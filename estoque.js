@@ -1,15 +1,13 @@
-let estoque = {
-    'joao': [
+let estoque ={
+    'joao':[
         {'tipo': 'maca', 'quantidade': 1},
-        
-    ],
+],
     'maria':[
         {'tipo': 'maca', 'quantidade': 2},
-    ]
-
+],
 };
 
-function getEstoque(){
+function getEstoque() {
     return structuredClone(estoque);
 }
 
@@ -87,4 +85,4 @@ function limpaEstoque() {
     estoque = {};
 }
 
-export {getEstoque, transacaoNoEstoque, limpaEstoque}
+export {getEstoque,transacaoNoEstoque,limpaEstoque};
